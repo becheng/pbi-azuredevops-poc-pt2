@@ -66,24 +66,14 @@ write-Host "Gateway binding completed" -ForegroundColor Green;
 
 ## SET THE REFRESH SCHEDULE (If provided)
 
-if($env:scheduleJson -ne $null)
+if($null -ne $env:scheduleJson)
 {
 	write-Host "`n...Creating Refresh Schedule...";
 	
-	$refreshBody = @{
-	value = @{
-		enabled = 'true'
-		notifyOption = "NoNotification"
-		days = @("Sunday","Tuesday","Friday","Saturday")
-		times = @("07:00","11:30","16:00","23:30")
-		localTimeZoneId = "UTC"
-	}			
-	} | ConvertTo-Json
-
 	Invoke-PowerBIRestMethod `
 		-Method PATCH `
 		-Url "groups/$($workspace.id)/datasets/$($dataset.id)/refreshSchedule" `
-		-Body $env:scheduleJson `
+		-Body "$env:scheduleJson" `
 		-ErrorAction Stop;
 		
 	write-Host "Created Refresh Schedule" -ForegroundColor Green;
