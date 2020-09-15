@@ -1,7 +1,7 @@
 
 # variables 
 write-host "client.id: $env:client_id"
-write-host "client_secret: $(client_secret)"
+write-host "client_secret: $env:clientsecret"
 write-host "tenant.id: $env:tenant_id"
 write-host "datasetname: $env:datasetname"
 write-host "workspacename: $env:workspacename"
@@ -16,7 +16,7 @@ write-host "dbNameParamValue: $env:dbNameParamValue"
 ## SIGN IN WITH SP
 
 write-host "`n...sign in with SP"
-$clientsec = "$(client_secret)" | ConvertTo-SecureString -AsPlainText -Force
+$clientsec = "$env:clientsecret" | ConvertTo-SecureString -AsPlainText -Force
 $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $env:client_id, $clientsec 
 Connect-PowerBIServiceAccount `
 	-ServicePrincipal `

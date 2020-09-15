@@ -3,7 +3,7 @@
 ## SIGN IN WITH MA
 
 write-host "`n...Sign in using MA"
-$userAdminPassword = $(mauserPassword) | ConvertTo-SecureString -asPlainText -Force
+$userAdminPassword = "$env:mauserpassword" | ConvertTo-SecureString -asPlainText -Force
 $credential = New-Object System.Management.Automation.PSCredential($env:userAdminUsername, $userAdminPassword)
 Connect-PowerBIServiceAccount `
 	-Credential $credential 
@@ -118,7 +118,7 @@ write-Host "Refresh completed" -ForegroundColor Green;
 Start-Sleep -s 5
 
 write-host "`n...Take back ownership with the SP account"
-$clientsec = "$(client_secret)" | ConvertTo-SecureString -AsPlainText -Force
+$clientsec = "$env:clientsecret" | ConvertTo-SecureString -AsPlainText -Force
 $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $env:client_id, $clientsec 
 Connect-PowerBIServiceAccount -ServicePrincipal -Credential $credential -TenantId $env:tenant_id
 
