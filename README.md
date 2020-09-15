@@ -33,10 +33,9 @@ Here we will be uisng a SP to access the various Power BI permissions.  At a hig
    Note: try using the SQL auth, username/password instead for the PoC.
 
       
-### Notes
-1. pbi dataset > use data gateway to ON 
-2. the pbi dataset's should be point the onprem db server/db name that is aligned to datasources set up manually in the gateway.
-   For example, the gateway is set up with a dbserver=localdb and db=localcustomer, than the pbi dataset should have the same.
-3. Will need to set the map to the gateway's datasource name in order to connect the two, i.e. dataset credentials to the gateway
-
+### TODOs
+1. Document the workaround done for the limitation that an SP can't seem to do the binding to a gateway; only works with a MA account.  
+2. Document the mapping the logic to bind to the gateway, i.e update the db params to match the gateway's datasource and make sure to refresh so the mapping occurs.
+3. Document the step to  map a secret variable to the PS task in the pipelne
+4. Document the use of variable groups in Azure devops to bind environment specific variables to a stage vs common varaibles used at the Release.
 
