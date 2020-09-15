@@ -119,4 +119,3 @@ Invoke-PowerBIRestMethod `
 	-ErrorAction Stop;
 	
 write-Host "Take over to SP completed" -ForegroundColor Green;
-#>
