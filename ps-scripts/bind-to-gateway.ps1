@@ -1,34 +1,9 @@
 # PS script to Bind to PBI on-prem gateway
 
-## variables
-
-# environment vars
-$env:datasetname = "customer-report"
-$env:workspacename = "customerZ"
-$env:gatewaydatasrc = "customerzdb-datasrc"
-$env:scheduleJson = '{"value":{"enabled":"true","notifyOption":"NoNotification","days":["Sunday","Tuesday","Thursday","Saturday"],"times":["07:00","11:30","16:00","23:30"],"localTimeZoneId":"UTC"}}'
-
-# MA credentials
-$env:targetGatewayName = "MyLocalGateway"
-$env:userAdminUsername = "anothertenantadmin@benchenggmail.onmicrosoft.com"
-
-# SP credentials
-$env:client_id = "174407ec-539b-4f4c-822f-77639278931a"
-$env:tenant_id = "9e54649d-2ff3-4f06-9561-d81f12cfcfa6"
-
-# only for ps script
-$maPswd = "Engineno9"
-$spPswd = "~~7Cl5R.u2Ur_N.~N93fgZVSkAT.vo0pH7"
-$dbPswd = "Engineno9"
-
-
-## ---------------------------------------------------------------------
-
-
 ## SIGN IN WITH MA
 
 write-host "`n...Sign in using MA"
-$userAdminPassword = $maPswd | ConvertTo-SecureString -asPlainText -Force
+$userAdminPassword = $(mauserPassword) | ConvertTo-SecureString -asPlainText -Force
 $credential = New-Object System.Management.Automation.PSCredential($env:userAdminUsername, $userAdminPassword)
 Connect-PowerBIServiceAccount `
 	-Credential $credential 
@@ -143,7 +118,7 @@ write-Host "Refresh completed" -ForegroundColor Green;
 Start-Sleep -s 5
 
 write-host "`n...Take back ownership with the SP account"
-$clientsec = $spPswd | ConvertTo-SecureString -AsPlainText -Force
+$clientsec = "$(client_secret)" | ConvertTo-SecureString -AsPlainText -Force
 $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $env:client_id, $clientsec 
 Connect-PowerBIServiceAccount -ServicePrincipal -Credential $credential -TenantId $env:tenant_id
 

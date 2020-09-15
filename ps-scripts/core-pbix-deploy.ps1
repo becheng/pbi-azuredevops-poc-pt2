@@ -1,28 +1,10 @@
-$env:client_id = "174407ec-539b-4f4c-822f-77639278931a"
-$env:tenant_id = "9e54649d-2ff3-4f06-9561-d81f12cfcfa6"
-$env:datasetname = "customer-report"
-$env:workspacename = "customerZ"
-$env:userAdmin = "anothertenantadmin@benchenggmail.onmicrosoft.com"
-$env:pbixFilePath= "C:\Users\bencheng\temp\customer-report-v2.pbix"
-$env:dbServerParamName = "dbServerParam"
-$env:dbNameParamName = "dbNameParam"
-
-#onprem datasource
-$env:dbServerParamValue = "localhost\SQLEXPRESS"
-$env:dbNameParamValue = "customerzdb"
-
-# online datasources
-#$env:dbServerParamValue = "customerxdbsvr.database.windows.net"
-#$env:dbNameParamValue = "customerXdb"
-
-
-# ---------------------------------
 
 # variables 
 write-host "client.id: $env:client_id"
+write-host "client_secret: $(client_secret)"
 write-host "tenant.id: $env:tenant_id"
-write-host "tenant.id: $env:datasetname"
-write-host "tenant.id: $env:workspacename"
+write-host "datasetname: $env:datasetname"
+write-host "workspacename: $env:workspacename"
 write-host "userAdmin: $env:userAdmin"
 write-host "pbixFilePath: $env:pbixFilePath"
 write-host "dbServerParamName: $env:dbServerParamName"
@@ -30,14 +12,11 @@ write-host "dbServerParamValue: $env:dbServerParamValue"
 write-host "dbNameParamName: $env:dbNameParamName"	
 write-host "dbNameParamValue: $env:dbNameParamValue"	
 
-#write-host "client_secret: $(client_secret)"
-
 
 ## SIGN IN WITH SP
 
 write-host "`n...sign in with SP"
-#$clientsec = "$(client_secret)" | ConvertTo-SecureString -AsPlainText -Force
-$clientsec = "~~7Cl5R.u2Ur_N.~N93fgZVSkAT.vo0pH7" | ConvertTo-SecureString -AsPlainText -Force
+$clientsec = "$(client_secret)" | ConvertTo-SecureString -AsPlainText -Force
 $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $env:client_id, $clientsec 
 Connect-PowerBIServiceAccount `
 	-ServicePrincipal `
@@ -155,39 +134,3 @@ Invoke-PowerBIRestMethod `
 	-ErrorAction Stop;
 	
 write-host "DB param change complete" -ForegroundColor Green;
-
-
-
-
-<# Update the dataset's credentials -- ONLY for online datasources
-
-$env:dbusername = "wabbit"
-$dbPswd = "Engineno9"
-
-write-host "`n...Updating dataset db credentials"
-$boundGateway = Invoke-PowerBIRestMethod `
-	-Url "groups/$($workspace.id)/datasets/$($dataset.id)/Default.GetBoundGatewayDataSources" `
-	-Method GET `
-	| ConvertFrom-Json `
-
-$dsCredential = @{
-	credentialType = "Basic"
-	basicCredentials = @{            
-		username = $env:dbusername
-		password = $dbPswd
-	}
-} | ConvertTo-Json 
-$dsCredential = @{
-	credentialType ="Basic"
-	basicCredentials = @{            
-		username = $env:dbusername
-		password = "$(dbpassword)"
-	}
-} | ConvertTo-Json 
-
-write-host "$dsCredential + $($boundGateway.value.gatewayId) + $($boundGateway.value.id)"
-Invoke-PowerBIRestMethod `
-	-Url "gateways/$($boundGateway.value.gatewayId)/datasources/$($boundGateway.value.id)" `
-	-Method PATCH `
-	-Body $dsCredential 
-#>
