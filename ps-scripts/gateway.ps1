@@ -6,12 +6,12 @@ if($Psversion.Major -ge 7)
 		Install-Module -Name DataGateway 
 	}
 
-	$securePassword = "~~7Cl5R.u2Ur_N.~N93fgZVSkAT.vo0pH7" | ConvertTo-SecureString -AsPlainText -Force;
-	$ApplicationId ="174407ec-539b-4f4c-822f-77639278931a";
-	$Tenant = "9e54649d-2ff3-4f06-9561-d81f12cfcfa6";
+	$securePassword = "[client secret here]" | ConvertTo-SecureString -AsPlainText -Force;
+	$ApplicationId ="[client/app id]";
+	$Tenant = "[AAD tenant id]";
 	$GatewayName = "MyLocalGateway";
 	$RecoverKey = "Demo@123" | ConvertTo-SecureString -AsPlainText -Force;
-	$userIDToAddasAdmin = "3152448a-5865-4cc9-9f5a-f64b53aba876" #anothertenantadmin@bencheng.onmicrosoft.com
+	$userIDToAddasAdmin = "[AAD account with a PBI pro license Object Id]" 
 
 	#Gateway Login
 	Connect-DataGatewayServiceAccount -ApplicationId $ApplicationId -ClientSecret $securePassword  -Tenant $Tenant
