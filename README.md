@@ -52,8 +52,30 @@ For context, our deployment Powershell scripts relys on the best practice of par
 6. Make note of both parameter names because they will be used later to set up the pipeline.
 
 ### 4.0 A "break down" of the Powershell script
-Before we get into creating the devops pipelines, we do a break down what the powershell scripts are doing.
-**@TODO**
+Before we get into creating the devops pipelines, we do a mini break down of what the powershell scripts are doing.  Where possible we always leverage the *[MicrosoftPowerBIMgmt](https://docs.microsoft.com/en-us/powershell/power-bi/overview?view=powerbi-ps)* powershell cmdlets, because *why revent the wheel?* otherwise we use the *Invoke-PowerBIRestMethod* cmdlet (also part of *MicrosoftPowerBIMgmt* module) to invoke any of the Power BI Rest APIs where functionality is not covered by the cmdlets.  The nice thing about using these cmdlets is the authorization access token is taken care for you for your entire session once you've signed in using the *Connect-PowerBIServiceAccount* cmdlet.
+
+The scripts are commented, and should be easy to follow.  Here is the high level break for each of deployment scripts depending if you are suing a cloud on an on-prem datasource with a gateway.
+
+**[deploy-pbixreport.ps1](./ps-scripts/deploy-pbixreport.ps1) script**
+1. Sign in using the service principal
+2. Retrieve the target workspace and create it if it does not exist.
+3. Add the admin user to the workspace if user does not already exist.
+4. Overwrite the existing report (if it exist) with a new version and retrieve the new report object
+5. Take over the report's dataset using the service principal# get the embedded dataset of the new report
+6. Update the dataset's data source's parameters.
+7. Update the dataset's data source's credentials.
+8. Update/Set the scheduled refresh of the dataset.
+9. Invoke a refresh the dataset  
+
+**[deploy-report-with-gateway.ps1](./ps-scripts/deploy-pbixreport-with-gateway.ps1) script**
+Step 1-6 are identical to the above.
+7. Sign in using the admin user account.
+8. Take over the report's dataset using the admin user account.
+9. Look up the target gateway and bind it to the dataset.
+10. Update/Set the scheduled refresh of the dataset.
+11. Invoke a refresh the dataset
+12. Take (back) the report's dataset using the service principal.    
+
 
 ### 5.0 Putting it all together in Azure DevOps
 We use [Azure Devops](https://dev.azure.com/) to build our build and release pipelines to deploy the Power BI reports to the Power BI portal.  We start by creating a Devops project and checking in your report (.pbix) and deployment powershell scripts to the project repo.
@@ -164,7 +186,7 @@ We create the release pipeline that utizilies our powershell script to deploy to
 
     **[TODO: Add updated screen shots here]**
 
-### 6.0 Applying this to the Real Scenarios
+### 6.0 Applying to real world scenarios
 **@TODO**
 
 ### 7.0 Final Thoughts
