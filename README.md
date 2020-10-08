@@ -67,7 +67,8 @@ The scripts are commented, and should be easy to follow.  Here is the high level
 8. Update/Set the scheduled refresh of the dataset.
 9. Invoke a refresh the dataset  
 
-**[deploy-report-with-gateway.ps1](./ps-scripts/deploy-pbixreport-with-gateway.ps1) script**
+**[deploy-report-with-gateway.ps1](./ps-scripts/deploy-pbixreport-with-gateway.ps1) script**\
+
 Step 1-6 are identical to the above.
 7. Sign in using the admin user account.
 8. Take over the report's dataset using the admin user account.
