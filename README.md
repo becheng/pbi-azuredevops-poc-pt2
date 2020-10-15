@@ -153,20 +153,20 @@ We create the release pipeline that utizilies our Powershell script to deploy th
 *We're on the home stretch!*  Here, we set up the variables referenced by the script using the *Pipeline Variables* and *Variable Groups*.  Pipeline variables are available to a particular pipeline and can be scoped with *Release* so they are accessible to the entire pipeline or scoped to a particular *Stage* within the pipeline.  Variable Groups are available across multiple pipelines and similarily can scoped to a Release or a Stage.  To keep our variables nice and tidy, we define our global variables as *Pipeline Variables* and environment specific (eg. Production, Dev, QA) variables as a *Variable Group* and tie it to a Stage.
 
 **Pipeline Variables**
-1.  Click the *Variables* link in the pipeline.
-2.  Make sure *Pipeline variables* is selected on the left nav and add the following variables:
-    | Variable Name | Value | Type | Scope |
-    | ------------- | ----- | ---- | ----- |
-    | tenantId | [ Tenant Id of the registered AAD app ] | Plain text | Release |
-    | clientId | [ Client Id of the registered AAD app ] | Plain text | Release |
-    | clientSecret | [ Client secret of the registered AAD app ] | Secret | Release |
-    | pbixFilePath | [ File path to the published .pbix file] | Plain text | Release |
-    | userAdminEmail | [ Email addresss of the PowerBI Pro user account] | Plain text | Release |
-    | userAdminPassword | [ Password of the PowerBI Pro user account] | Secret | Release |
-    | dbServerParamName | [ PowerBI report parameter name of the database server] | Plain text | Release |
-    | dbNameParamName | [ PowerBI report parameter name of the database name] | Plain text | Release |
-    | dbUserName* | [ Database service account user name ] | Plain text | Release |
-    | dbUserPassword* | [ Database service account password ] | Secret | Release |
+1. Click the *Variables* link in the pipeline.
+2. Make sure *Pipeline variables* is selected on the left nav and add the following variables:
+   | Variable Name | Value | Type | Scope |
+   | ------------- | ----- | ---- | ----- |
+   | tenantId | [ Tenant Id of the registered AAD app ] | Plain text | Release |
+   | clientId | [ Client Id of the registered AAD app ] | Plain text | Release |
+   | clientSecret | [ Client secret of the registered AAD app ] | Secret | Release |
+   | pbixFilePath | [ File path to the published .pbix file] | Plain text | Release |
+   | userAdminEmail | [ Email addresss of the PowerBI Pro user account] | Plain text | Release |
+   | userAdminPassword | [ Password of the PowerBI Pro user account] | Secret | Release |
+   | dbServerParamName | [ PowerBI report parameter name of the database server] | Plain text | Release |
+   | dbNameParamName | [ PowerBI report parameter name of the database name] | Plain text | Release |
+   | dbUserName* | [ Database service account user name ] | Plain text | Release |
+   | dbUserPassword* | [ Database service account password ] | Secret | Release |
 
 - *The dbUserName and dbUserPassword variables are required only if using the [deploy-pbixreport.ps1](./ps-scripts/deploy-pbixreport.ps1) script.
 - To set up a variable as a Secret type, click the lock icon located to the right of the varable text field.
