@@ -116,6 +116,7 @@ We construct a simple build pipeline that publishes our files for deployment.
    ```
    
    <img src="./images/azdevops_build.jpg" width=450>
+
 3. Save and run the build pipeline.
    
 #### 5.2 Create a Release Pipeline
@@ -124,16 +125,19 @@ We create the release pipeline that utizilies our Powershell script to deploy th
 1. Create a new *Release* pipeline, e.g. `my-pbidevops-release`.
 2. Add an artifact and choose the newly created build pipeline source.
 
-   <img src="./images/azdevops_rel_artifact.jpg" width=450>
+  <img src="./images/azdevops_rel_artifact.jpg" width=450>
+
 3. Add a new Stage with an *Empty Job* and provide a name, e.g. `Deploy PBI Report`.
+
 4. Click on the "+" (*Add a task to the Agent Job*), search and add a *Powershell Task*.    
-5. Name the task, e.g. `Install PS Modules` and copy and paste the content below as an *Inline* script.  This will install the Powershell cmdlets used by the deployment Powershell scripts.
-   ```
-   Install-Module -Name MicrosoftPowerBIMgmt.Profile -Verbose -Scope CurrentUser -Force
-   Install-Module -Name MicrosoftPowerBIMgmt.Workspaces -Verbose -Scope CurrentUser -Force
-   Install-Module -Name MicrosoftPowerBIMgmt.Reports -Verbose -Scope CurrentUser -Force
-   Install-Module -Name MicrosoftPowerBIMgmt.Data -Verbose -Scope CurrentUser -Force
-   ```
+5. Name the task, e.g. `Install PS Modules` and copy and paste the content below as an *Inline* script.  This will install the Powershell cmdlets used by the deployment Powershell scripts. 
+  
+    ```
+    Install-Module -Name MicrosoftPowerBIMgmt.Profile -Verbose -Scope CurrentUser -Force
+    Install-Module -Name MicrosoftPowerBIMgmt.Workspaces -Verbose -Scope CurrentUser -Force
+    Install-Module -Name MicrosoftPowerBIMgmt.Reports -Verbose -Scope CurrentUser -Force
+    Install-Module -Name MicrosoftPowerBIMgmt.Data -Verbose -Scope CurrentUser -Force
+    ```
    
    <img src="./images/azdevops_reltask1.jpg" width=450>
 
@@ -151,19 +155,18 @@ We create the release pipeline that utizilies our Powershell script to deploy th
 **Pipeline Variables**
 1.  Click the *Variables* link in the pipeline.
 2.  Make sure *Pipeline variables* is selected on the left nav and add the following variables:
-    
-  | Variable Name | Value | Type | Scope |
-  | ------------- | ----- | ---- | ----- |
-  | tenantId | [ Tenant Id of the registered AAD app ] | Plain text | Release |
-  | clientId | [ Client Id of the registered AAD app ] | Plain text | Release |
-  | clientSecret | [ Client secret of the registered AAD app ] | Secret | Release |
-  | pbixFilePath | [ File path to the published .pbix file] | Plain text | Release |
-  | userAdminEmail | [ Email addresss of the PowerBI Pro user account] | Plain text | Release |
-  | userAdminPassword | [ Password of the PowerBI Pro user account] | Secret | Release |
-  | dbServerParamName | [ PowerBI report parameter name of the database server] | Plain text | Release |
-  | dbNameParamName | [ PowerBI report parameter name of the database name] | Plain text | Release |
-  | dbUserName* | [ Database service account user name ] | Plain text | Release |
-  | dbUserPassword* | [ Database service account password ] | Secret | Release |
+    | Variable Name | Value | Type | Scope |
+    | ------------- | ----- | ---- | ----- |
+    | tenantId | [ Tenant Id of the registered AAD app ] | Plain text | Release |
+    | clientId | [ Client Id of the registered AAD app ] | Plain text | Release |
+    | clientSecret | [ Client secret of the registered AAD app ] | Secret | Release |
+    | pbixFilePath | [ File path to the published .pbix file] | Plain text | Release |
+    | userAdminEmail | [ Email addresss of the PowerBI Pro user account] | Plain text | Release |
+    | userAdminPassword | [ Password of the PowerBI Pro user account] | Secret | Release |
+    | dbServerParamName | [ PowerBI report parameter name of the database server] | Plain text | Release |
+    | dbNameParamName | [ PowerBI report parameter name of the database name] | Plain text | Release |
+    | dbUserName* | [ Database service account user name ] | Plain text | Release |
+    | dbUserPassword* | [ Database service account password ] | Secret | Release |
 
 - *The dbUserName and dbUserPassword variables are required only if using the [deploy-pbixreport.ps1](./ps-scripts/deploy-pbixreport.ps1) script.
 - To set up a variable as a Secret type, click the lock icon located to the right of the varable text field.
@@ -174,16 +177,15 @@ Example: $(System.DefaultWorkingDirectory)/_**my-pbidevops-pipeline**/drop/**my-
 1. Click on the *Variable groups* in the left nav and click *Manage variable groups*.
 2. Click on *+ Variable group*, name the group, e.g. `my-variable-group` 
 3. Add the following variables:
-   
-  | Variable Name | Value |
-  | ------------- | ----- |
-  | workspacename | [ workspace name ] |
-  | dbServerParamValue | [ database server name ] |
-  | dbNameParamValue | [ database name ] |
-  | gatewayName | [ gateway name ] |
-  | scheduleJson | [ json string of the dataset refresh schedule ] |
+   | Variable Name | Value |
+   | ------------- | ----- |
+   | workspacename | [ workspace name ] |
+   | dbServerParamValue | [ database server name ] |
+   | dbNameParamValue | [ database name ] |
+   | gatewayName | [ gateway name ] |
+   | scheduleJson | [ json string of the dataset refresh schedule ] |
   
-  - Example of scheduleJson value: 
+- Example of scheduleJson value: 
     ```
     { 
       "value": {
@@ -198,10 +200,10 @@ Example: $(System.DefaultWorkingDirectory)/_**my-pbidevops-pipeline**/drop/**my-
 
     <img src="./images/azdevops_vargroup.jpg" width=350>
 
-4. Save the group and go back to the Release, edit it, select *Variables*, *Variable groups*, and select *Link variable group* and link the variable group to the stage.
+1. Save the group and go back to the Release, edit it, select *Variables*, *Variable groups*, and select *Link variable group* and link the variable group to the stage.
    
    <img src="./images/azdevops_linkvargrp.jpg" width=350>
-5. Click *Link* to the save linkage.
+2. Click *Link* to the save linkage.
 
 **Resolving Secret Variables**
 
