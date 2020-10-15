@@ -171,9 +171,9 @@ We create the release pipeline that utizilies our Powershell script to deploy th
 Example: $(System.DefaultWorkingDirectory)/_**my-pbidevops-pipeline**/drop/**my-powerbi-report**.pbix` 
 
 **Variable Groups**
-1.  Click on the *Variable groups* in the left nav and click *Manage variable groups*.
-2.  Click on *+ Variable group*, name the group, e.g. `my-variable-group` 
-3.  Add the following variables:
+1. Click on the *Variable groups* in the left nav and click *Manage variable groups*.
+2. Click on *+ Variable group*, name the group, e.g. `my-variable-group` 
+3. Add the following variables:
    
   | Variable Name | Value |
   | ------------- | ----- |
@@ -198,14 +198,16 @@ Example: $(System.DefaultWorkingDirectory)/_**my-pbidevops-pipeline**/drop/**my-
 
     <img src="./images/azdevops_vargroup.jpg" width=350>
 
-4.  Save the group and go back to the Release, edit it, select *Variables*, *Variable groups*, and select *Link variable group* and link the variable group to the stage.
-  <img src="./images/azdevops_linkvargrp.jpg" width=350>
-19. Click *Link* to the save linkage.
+4. Save the group and go back to the Release, edit it, select *Variables*, *Variable groups*, and select *Link variable group* and link the variable group to the stage.
+   
+   <img src="./images/azdevops_linkvargrp.jpg" width=350>
+5. Click *Link* to the save linkage.
 
 **Resolving Secret Variables**
+
 Variables marked as secret in either in *Variable Groups* or *Pipeline Variables* require extra set up so our powershell script can decrypt the variables to use them.  
-20. Click *Tasks* in your pipeline, click on the *Run PS deploy script* and select its *Environment Variables* section.
-21. Enter the folllowing to decrypt all our secret variables:
+1. Click *Tasks* in your pipeline, click on the *Run PS deploy script* and select its *Environment Variables* section.
+2. Enter the folllowing to decrypt all our secret variables:
   | Name | Value |
   | ------------- | ----- |
   | clientSecret | $(clientSecret) |
@@ -213,7 +215,7 @@ Variables marked as secret in either in *Variable Groups* or *Pipeline Variables
   | dbUserName* | $(dbUserName) | 
   | dbUserPassword* | $(dbUserPassword) |  
   *only applicable if using a cloud datasource
-22. Save the Release.
+3. Save the Release.
     
 ### 6.0 Running it end to end
 1. Run the Build pipeline.
