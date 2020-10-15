@@ -1,29 +1,29 @@
-
-write-host "client.id: $env:client_id"
-write-host "client_secret: $env:clientsecret"
-write-host "tenant.id: $env:tenant_id"
-write-host "datasetname: $env:datasetname"
+write-host "clientId: $env:clientId"
+write-host "clientsecret: $env:clientsecret"
+write-host "tenantId: $env:tenantId"
 write-host "workspacename: $env:workspacename"
-write-host "userAdminUsername: $env:userAdminUsername"
+write-host "userAdminEmail: $env:userAdminEmail"
 write-host "pbixFilePath: $env:pbixFilePath"
 write-host "dbServerParamName: $env:dbServerParamName"
 write-host "dbServerParamValue: $env:dbServerParamValue"
 write-host "dbNameParamName: $env:dbNameParamName"	
-write-host "dbNameParamValue: $env:dbNameParamValue"	
-
+write-host "dbNameParamValue: $env:dbNameParamValue"
+write-host "dbUserName: $env:dbUserName"	
+write-host "dbUserPassword: $env:dbUserPassword"
+write-host "reportName: $env:reportName"
+	
 
 ## ------------------------------------------------------
 ## 1. SIGN IN WITH SP
 ## ------------------------------------------------------
 write-host "`n...sign in with SP"
 $clientsec = "$env:clientsecret" | ConvertTo-SecureString -AsPlainText -Force
-$credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $env:client_id, $clientsec
+$credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $env:clientId, $clientsec
  
 Connect-PowerBIServiceAccount `
 	-ServicePrincipal `
 	-Credential $credential `
-	-TenantId $env:tenant_id
-
+	-TenantId $env:tenantId
 
 ## ------------------------------------------------------
 ## 2. MANAGE WORKSPACE
@@ -46,35 +46,28 @@ if($null -eq $workspace){
 	write-host "- $env:workspacename workspace already exists"
 }
 
-write-Host "Workspace complete" -ForegroundColor Green;
-
-
 ## ------------------------------------------------------
 # 3. ADD AN ADMIN USER TO THE WORKSPACE
 ## ------------------------------------------------------
 write-host "`n...Adding admin user to the workspace"
-
 # check if the admin user already exists 
 $wsusersResponse = Invoke-PowerBIRestMethod `
 	-Url "groups/$($workspace.id)/users" `
 	-Method GET `
 	| ConvertFrom-Json 
 	
-$wsusers = $wsusersResponse.value | where-object {$_.emailAddress -eq $env:userAdminUsername} 
+$wsusers = $wsusersResponse.value | where-object {$_.emailAddress -eq $env:userAdminEmail} 
 if ($null -eq $wsusers) {
 
-	Write-Host "- Adding user '$env:userAdminUsername' to '$env:workspacename' workspace."
+	Write-Host "- Adding user '$env:userAdminEmail' to '$env:workspacename' workspace."
 	Add-PowerBIWorkspaceUser `
 	   -Id $($workspace.id) `
-	   -UserPrincipalName $env:userAdminUsername `
+	   -UserPrincipalName $env:userAdminEmail `
 	   -AccessRight "Admin"
 
 } else {
-	write-host "- User $env:userAdminUsername' already has access to the '$env:workspacename' workspace."
+	write-host "- User $env:userAdminEmail' already has access to the '$env:workspacename' workspace."
 }
-
-write-Host "Admin user added to workspace" -ForegroundColor Green;
-
 
 ## ------------------------------------------------------
 ## 4. UPLOAD PBIX REPORT
@@ -82,19 +75,17 @@ write-Host "Admin user added to workspace" -ForegroundColor Green;
 write-host "`n...Importing .pbix report."
 $new_report = New-PowerBIReport `
 	-Path $env:pbixFilePath `
-	-Name $env:datasetname `
+	-Name $env:reportName `
 	-ConflictAction "CreateOrOverwrite" `
 	-Workspace $workspace
-    #-ConflictAction "CreateOrOverwrite" `
-    
-write-Host ".pbix report uploaded" -ForegroundColor Green;
+
+write-Host ".pbix report uploaded";
 
 # Get the report again because the dataset id is not immediately available with New-PowerBIReport
 $new_report = Get-PowerBIReport `
 	-WorkspaceId "$($workspace.id)" `
 	-Id $new_report.id
 
-	
 ## ------------------------------------------------------
 ## 5. UPDATE DB PARAMS
 ## ------------------------------------------------------
@@ -104,7 +95,6 @@ write-host "`n...Take over the dataset with the SP"
 $dataset = Get-PowerBIDataset `
    -WorkspaceId "$($workspace.id)" `
    -Id $new_report.datasetId 
-#-Name "$env:datasetname" `
    
 # take over 
 Invoke-PowerBIRestMethod `
@@ -112,10 +102,10 @@ Invoke-PowerBIRestMethod `
 	-Method Post `
 	-ErrorAction Stop;
 
-write-host "Take over with SP complete" -ForegroundColor Green;
+write-host "Take over with SP complete"
 
 #Change the database server and db / params
-write-host "`n...Update it DB params"
+write-host "`n...Update its DB params"
 
 $dbParams = @{
 	updateDetails = @(
@@ -130,61 +120,42 @@ Invoke-PowerBIRestMethod `
 	-Body $dbParams `
 	-ErrorAction Stop;
 	
-write-host "DB param change complete" -ForegroundColor Green;
+write-host "DB param change complete";
 
 
 ## ------------------------------------------------------
-## SIGN IN WITH MA
+##  6. BIND GATEWAY
 ## ------------------------------------------------------
-write-host "`n...Sign in using MA"
-$userAdminPassword = $(mauserPassword) | ConvertTo-SecureString -asPlainText -Force
-$credential = New-Object System.Management.Automation.PSCredential($env:userAdminUsername, $userAdminPassword)
+
+# 6.1 Sign in with user account
+write-host "`n...Sign in using user account"
+
+$userAdminPassword = $env:userAdminPassword | ConvertTo-SecureString -asPlainText -Force
+$uacreds= New-Object System.Management.Automation.PSCredential($env:userAdminEmail, $userAdminPassword)
 Connect-PowerBIServiceAccount `
-	-Credential $credential 
+	-Credential $uacreds
 
+# 6.2 take over dataset with user account
+write-host "`n...Take over dataset with user account"
 
-## ------------------------------------------------------
-## TAKE OVER WORKSPACE with MA 
-## ------------------------------------------------------
-write-host "...Taking over dataset with MA";
-
-# Get workspace
-$workspace = Get-PowerBIWorkspace -Name $env:workspacename
-
-# get all datasets in workspace
-$datasetsResp = Invoke-PowerBIRestMethod `
-	-Url "groups/$($workspace.id)/datasets" `
-	-Method Get `
-	| ConvertFrom-Json 
-
-# get only the target dataset 
-$dataset = $datasetsResp.value | Where-Object {$_.name -eq $env:datasetname}
- 
-# take over the dataset 
 Invoke-PowerBIRestMethod `
 	-Url "groups/$($workspace.id)/datasets/$($dataset.id)/Default.TakeOver" `
 	-Method Post `
 	-ErrorAction Stop;
 
-write-host "Take over with MA complete..." -ForegroundColor Green;
-
-
-## ------------------------------------------------------
-## BIND TO GATEWAY
-## ------------------------------------------------------
-
-# Discover bindable gateways
+# 6.3 Discover bindable gateways
 write-host "`n...Discover Gateways"
+
 $gatewayDataSources = Invoke-PowerBIRestMethod `
 	-Url "groups/$($workspace.id)/datasets/$($dataset.id)/Default.DiscoverGateways" `
 	-Method GET | ConvertFrom-Json `
 	-ErrorAction Stop;	
 
-# get only the target gateway
-$gateway = $gatewayDataSources.value | Where-Object {$_.name -eq $env:targetGatewayName} 
-write-host "Found Gateway '$env:targetGatewayName'; gatewayObjectId=$($gateway.id)" -ForegroundColor Green
+# 6.3 get only the target gateway
+$gateway = $gatewayDataSources.value | Where-Object {$_.name -eq $env:gatewayName}
+write-host "Found Gateway '$env:gatewayName'; gatewayObjectId=$($gateway.id)"
 
-# Bind 
+# 6.4 Bind 
 write-host "`n...Binding to Gateway"
 $bindReqBody = @{
 	gatewayObjectId = "$($gateway.id)"
@@ -196,45 +167,34 @@ Invoke-PowerBIRestMethod `
 	-Body $bindReqBody `
 	-ErrorAction Stop;
 	
-write-Host "Gateway binding completed" -ForegroundColor Green;
-
+write-Host "Gateway binding completed";
 
 ## ------------------------------------------------------
-## SET THE REFRESH SCHEDULE (If provided)
+## 7. SET THE REFRESH SCHEDULE (If provided)
 ## ------------------------------------------------------
+
 if($null -ne $env:scheduleJson)
 {
 	write-Host "`n...Creating Refresh Schedule...";
 	
-	$refreshBody = @{
-	value = @{
-		enabled = 'true'
-		notifyOption = "NoNotification"
-		days = @("Sunday","Tuesday","Friday","Saturday")
-		times = @("07:00","11:30","16:00","23:30")
-		localTimeZoneId = "UTC"
-	}			
-	} | ConvertTo-Json
-
 	Invoke-PowerBIRestMethod `
 		-Method PATCH `
 		-Url "groups/$($workspace.id)/datasets/$($dataset.id)/refreshSchedule" `
 		-Body $env:scheduleJson `
 		-ErrorAction Stop;
 		
-	write-Host "Created Refresh Schedule" -ForegroundColor Green;
+	write-Host "Saved Refresh Schedule";
 }
 
+## ------------------------------------------------------
+## 8. REFRESH THE DATASET 
+## ------------------------------------------------------
 
-## ------------------------------------------------------
-## REFRESH THE DATASET 
-## ------------------------------------------------------
 # Note!!! only a max of 8 refreshes allowed in the non-premium workspace, after which 400/Bad Requests will be recieved 
 # Note2 - Refresh must be issued after the bind to gateway otherwise the gateway's datasource will not be mapped.
  
 write-host "`n...Refreshing dataset"
-# other options: MailOnCompletion, NoNotification, MailOnFailure
-# Note: using NoNotification for poc, but if using MailOnFailure, MailOnCompletion will need to setup emails via the api otherwise will recieved 400/Bad Request  
+# Note: using NoNotification for sample, but if using MailOnFailure, MailOnCompletion will need to setup emails via the api otherwise will recieved 400/Bad Request  
 $refreshBody = @{
 	notifyOption ="NoNotification" 
 } | ConvertTo-Json
@@ -247,18 +207,18 @@ Invoke-PowerBIRestMethod `
 
 write-Host "Refresh completed" -ForegroundColor Green;
 
-
 ## ------------------------------------------------------
-## ASSIGN DS BACK TO SP
+## 9. ASSIGN DS BACK TO SP
 ## ------------------------------------------------------
 
 # wait for 5 secs
 Start-Sleep -s 5
 
 write-host "`n...Take back ownership with the SP account"
-$clientsec = "$(client_secret)" | ConvertTo-SecureString -AsPlainText -Force
-$credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $env:client_id, $clientsec 
-Connect-PowerBIServiceAccount -ServicePrincipal -Credential $credential -TenantId $env:tenant_id
+$clientsec = "$env:clientSecret" | ConvertTo-SecureString -AsPlainText -Force
+$credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $env:clientId, $clientsec
+ 
+Connect-PowerBIServiceAccount -ServicePrincipal -Credential $credential -TenantId $env:tenantId
 
 # take over 
 Invoke-PowerBIRestMethod `
@@ -266,4 +226,4 @@ Invoke-PowerBIRestMethod `
 	-Method Post `
 	-ErrorAction Stop;
 	
-write-Host "Take over to SP completed" -ForegroundColor Green;
+write-Host "Take over to SP completed"
