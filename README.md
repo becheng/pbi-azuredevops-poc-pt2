@@ -13,12 +13,12 @@ We start things off by creating the service principal to manage our reports and 
 
 1. Follow this [msdoc](https://docs.microsoft.com/en-us/power-bi/developer/embedded/embed-service-principal#get-started-with-a-service-principal) to set up the service principal with access to the PowerBI Apis.  **Important**: Skip steps 4 & 5 because we do these dynanically via the script. 
 2. In your [Azure portal](https://https://portal.azure.com/), select your Azure active directory app, go to its *API permissions*, click *Add a permission*, select *Power BI Service* and add the *Delegated* permissions of `Dataset.ReadWrite.All` and `Workspace.ReadWrite.All`.
-  <img src="./images/aad_pbi_api_permissions.jpg" width=450> 
-4. Sign in to your [Power BI portal](https://powerbi.microsoft.com/) with an admin account, go to *Settings* (Gear Icon), *Admin Portal*, *Tenant settings*.
-5. Under *Developer settings*, go to *Allow service principals to use PowerBI APIs*, enable it and add the security group and *Apply*.
-  <img src="./images/pbi_dev_settings.jpg" width=550>   
-6. Under *Workspace settings*, go to *Create workspaces*, enable it and add the security group and *Apply*.
-  <img src="./images/pbi_workspace_settings.jpg" width=550>
+   <img src="./images/aad_pbi_api_permissions.jpg" width=450> 
+3. Sign in to your [Power BI portal](https://powerbi.microsoft.com/) with an admin account, go to *Settings* (Gear Icon), *Admin Portal*, *Tenant settings*.
+4. Under *Developer settings*, go to *Allow service principals to use PowerBI APIs*, enable it and add the security group and *Apply*.
+   <img src="./images/pbi_dev_settings.jpg" width=550>   
+5. Under *Workspace settings*, go to *Create workspaces*, enable it and add the security group and *Apply*.
+   <img src="./images/pbi_workspace_settings.jpg" width=550>
 
 ### 2.0 Installing the Power BI Gateway
 We use a *nifty* Powershell script to provision the gateway under a service principal account.  Again this feature is under preview at the time of this writing so if you prefer to just use a user account, follow this [msdoc](https://docs.microsoft.com/en-us/data-integration/gateway/service-gateway-install) instead.
@@ -26,12 +26,12 @@ We use a *nifty* Powershell script to provision the gateway under a service prin
 1. Download the [gateway.ps1](./ps-scripts/gateway.ps1) script to the local machine where your on-premise datasource resides. 
 2. Update the script variables including the app client Id, tenant Id, secret and the email of user account with PowerBI pro license.  
 3. Run the script, e.g. `./gateway.ps1` and check your Task Manager to confirm the gateway is running. 
-  <img src="./images/gateway_process.jpg" width=250> 
+   <img src="./images/gateway_process.jpg" width=250> 
 4. Sign in to your [Power BI portal](https://powerbi.microsoft.com/) with your user account, go to *Settings*, *Manage Gateways* and confirm your named gateway is listed under *Gateway Clusters*.
-  <img src="./images/pbi_gateway.jpg" width=250> 
+   <img src="./images/pbi_gateway.jpg" width=250> 
 5. Select the gateway and click *Add Data Source* (located at the top).
 6. Name the data source, e.g. `my-gateway-datasource` and specify the connection values to the local data source.  In our case, we used a local Sql Server instance, enabled SQL authenication, and connected with a service level database username and password.
-  <img src="./images/pbi_gateway_datasrc.jpg" width=450>   
+   <img src="./images/pbi_gateway_datasrc.jpg" width=450>   
 7. Make a note of the gateway name because it will be used later to setup our devops pipeline.
 
 ### 3.0 Parameterizing the PowerBI Report datasource
@@ -46,7 +46,7 @@ For context, our deployment Powershell scripts depends on the best practice of u
    - Add new parameter for the database server, e.g. `dbServerParam`.
    - Check the Required checkbox to make the parameter mandatory
    - Enter your default server (typically your development instance) in the *Current Value* field.     
-  <img src="./images/dbServerParam.jpg" width=250>
+   <img src="./images/dbServerParam.jpg" width=250>
 5. Repeat the above step and add new parameter for the database name, e.g. `dbServerName`.
 6. Make note of both parameter names because they will be used later to set up the pipeline.
 
@@ -82,7 +82,7 @@ We use [Azure Devops](https://dev.azure.com/) to build our devops pipelines.
 1. Sign into your [Azure Devops](https://dev.azure.com) instance and create a new project, e.g. `my-pbidevops-pipeline`.
 2. Add your .pbix files to the project's repo.
 3. Download a copy of the [deploy-report-with-gateway.ps1](./ps-scripts/deploy-pbixreport-with-gateway.ps1) or [deploy-pbixreport.ps1](./ps-scripts/deploy-pbixreport.ps1) (if using cloud datasources) and upload it to your project's repo.
-  <img src="./images/azdevops_repo.jpg" width=450>
+   <img src="./images/azdevops_repo.jpg" width=450>
 
 #### 5.1 Create a Pipeline
 We construct a simple build pipeline that publishes our files for deployment.
