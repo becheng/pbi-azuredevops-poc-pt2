@@ -122,8 +122,8 @@ We construct a simple build pipeline that publishes our files for deployment.
 We create the release pipeline that utizilies our Powershell script to deploy the published reports to the Power BI portal.
 
 1. Create a new *Release* pipeline, e.g. `my-pbidevops-release`.
-2. Add an artifact and choose the newly created build pipeline source. 
-   
+2. Add an artifact and choose the newly created build pipeline source.
+
    <img src="./images/azdevops_rel_artifact.jpg" width=450>
 3. Add a new Stage with an *Empty Job* and provide a name, e.g. `Deploy PBI Report`.
 4. Click on the "+" (*Add a task to the Agent Job*), search and add a *Powershell Task*.    
@@ -208,13 +208,13 @@ Example: $(System.DefaultWorkingDirectory)/_**my-pbidevops-pipeline**/drop/**my-
 Variables marked as secret in either in *Variable Groups* or *Pipeline Variables* require extra set up so our powershell script can decrypt the variables to use them.  
 1. Click *Tasks* in your pipeline, click on the *Run PS deploy script* and select its *Environment Variables* section.
 2. Enter the folllowing to decrypt all our secret variables:
-  | Name | Value |
-  | ------------- | ----- |
-  | clientSecret | $(clientSecret) |
-  | userAdminPassword | $(userAdminPassword) |
-  | dbUserName* | $(dbUserName) | 
-  | dbUserPassword* | $(dbUserPassword) |  
-  *only applicable if using a cloud datasource
+   | Name | Value |
+   | ------------- | ----- |
+   | clientSecret | $(clientSecret) |
+   | userAdminPassword | $(userAdminPassword) |
+   | dbUserName* | $(dbUserName) | 
+   | dbUserPassword* | $(dbUserPassword) |  
+   *only applicable if using a cloud datasource
 3. Save the Release.
     
 ### 6.0 Running it end to end
@@ -228,6 +228,7 @@ Variables marked as secret in either in *Variable Groups* or *Pipeline Variables
 So now that you got this sample working, *what now?*  *How do I apply to this to a real world scenario?*  The good news, you can take all learnings here and tweak it to align to your real world scenarios.  Without getting too deep into the details here, by using a combination of creating/cloning the different *Stages* in a *Release* pipeline and *Variable Groups* to hold environment specific variables, you have the abililty to deploy different reports to different report environments (workspaces).
 
 Below is an example of an Azure Devops Release pipeline deploying a Tradewinds and Contoso Power BI report to the each of their respected environment workspaces.
+
 <img src="./images/azdevops_extended.jpg" width=500>
 
 ### 8.0 Final Thoughts
