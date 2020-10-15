@@ -25,13 +25,15 @@ We use a *nifty* Powershell script to provision the gateway under a service prin
 
 1. Download the [gateway.ps1](./ps-scripts/gateway.ps1) script to the local machine where your on-premise datasource resides. 
 2. Update the script variables including the app client Id, tenant Id, secret and the email of user account with PowerBI pro license.  
-3. Run the script, e.g. `./gateway.ps1` and check your Task Manager to confirm the gateway is running. 
+3. Run the script, e.g. `./gateway.ps1` and check your Task Manager to confirm the gateway is running.
+
    <img src="./images/gateway_process.jpg" width=250> 
 4. Sign in to your [Power BI portal](https://powerbi.microsoft.com/) with your user account, go to *Settings*, *Manage Gateways* and confirm your named gateway is listed under *Gateway Clusters*.
 
    <img src="./images/pbi_gateway.jpg" width=250> 
 5. Select the gateway and click *Add Data Source* (located at the top).
 6. Name the data source, e.g. `my-gateway-datasource` and specify the connection values to the local data source.  In our case, we used a local Sql Server instance, enabled SQL authenication, and connected with a service level database username and password.
+
    <img src="./images/pbi_gateway_datasrc.jpg" width=450>   
 7. Make a note of the gateway name because it will be used later to setup our devops pipeline.
 
