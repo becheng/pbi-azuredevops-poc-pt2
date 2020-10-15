@@ -57,7 +57,7 @@ For context, our deployment Powershell scripts depends on the best practice of u
 Before we get into creating the devops pipelines, let's break down our deployment scripts and explain what they'll doing.  Where possible we leverage the *[MicrosoftPowerBIMgmt](https://docs.microsoft.com/en-us/powershell/power-bi/overview?view=powerbi-ps)* Powershell cmdlets, because *why revent the wheel?* otherwise we use the *Invoke-PowerBIRestMethod* cmdlet (also part of *MicrosoftPowerBIMgmt* module) to invoke any of the Power BI Rest APIs where functionality is not covered by the cmdlets.  The nice thing about using these cmdlets is the authorization access token is taken care for you for your entire session once you've signed in using the *Connect-PowerBIServiceAccount* cmdlet.
 
 **[deploy-pbixreport.ps1](./ps-scripts/deploy-pbixreport.ps1) script (for cloud only data sources)**
-1. Sign in using the service principal
+1. Sign in using the service principal.
 2. Retrieve the target workspace and create it if it does not exist.
 3. Add the admin user to the workspace if user does not already exist.
 4. Upload the report and overwrite the older version (if one exisits.
@@ -65,7 +65,7 @@ Before we get into creating the devops pipelines, let's break down our deploymen
 6. Update the dataset's data source's parameters.
 7. Update the dataset's data source's credentials.
 8. Update/Set the scheduled refresh of the dataset.
-9. Invoke a refresh the dataset  
+9. Invoke a dataset refresh.  
 
 **[deploy-report-with-gateway.ps1](./ps-scripts/deploy-pbixreport-with-gateway.ps1) script (for on-premise datasources)**
 
@@ -75,7 +75,7 @@ Step 1-6 are identical to the above.
 8. Take over the report's dataset using the admin user account.
 9. Look up the target gateway and bind it to the dataset.
 10. Update/Set the scheduled refresh of the dataset.
-11. Invoke a refresh the dataset
+11. Invoke a dataset refresh.
 12. Take (back) the report's dataset using the service principal.    
 
 
@@ -85,6 +85,7 @@ We use [Azure Devops](https://dev.azure.com/) to build our devops pipelines.
 1. Sign into your [Azure Devops](https://dev.azure.com) instance and create a new project, e.g. `my-pbidevops-pipeline`.
 2. Add your .pbix files to the project's repo.
 3. Download a copy of the [deploy-report-with-gateway.ps1](./ps-scripts/deploy-pbixreport-with-gateway.ps1) or [deploy-pbixreport.ps1](./ps-scripts/deploy-pbixreport.ps1) (if using cloud datasources) and upload it to your project's repo.
+
    <img src="./images/azdevops_repo.jpg" width=450>
 
 #### 5.1 Create a Pipeline
@@ -93,7 +94,7 @@ We construct a simple build pipeline that publishes our files for deployment.
 1. Create a new *Pipeline*, e.g. `my-pbidevops-build`.
 2. Copy the following yaml script and save it to the pipeline.  This script publishes the .pbix and .ps1 files so the (deployment) *Release* pipeline has access to them.
       
-    ```
+   ```
     trigger:
     - master
 
@@ -112,8 +113,9 @@ We construct a simple build pipeline that publishes our files for deployment.
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Artifact: drop'
 
-    ```
-    <img src="./images/azdevops_build.jpg" width=450>
+   ```
+   
+   <img src="./images/azdevops_build.jpg" width=450>
 3. Save and run the build pipeline.
    
 #### 5.2 Create a Release Pipeline
@@ -121,24 +123,27 @@ We create the release pipeline that utizilies our Powershell script to deploy th
 
 1. Create a new *Release* pipeline, e.g. `my-pbidevops-release`.
 2. Add an artifact and choose the newly created build pipeline source. 
+   
    <img src="./images/azdevops_rel_artifact.jpg" width=450>
 3. Add a new Stage with an *Empty Job* and provide a name, e.g. `Deploy PBI Report`.
 4. Click on the "+" (*Add a task to the Agent Job*), search and add a *Powershell Task*.    
 5. Name the task, e.g. `Install PS Modules` and copy and paste the content below as an *Inline* script.  This will install the Powershell cmdlets used by the deployment Powershell scripts.
-    ```
-    Install-Module -Name MicrosoftPowerBIMgmt.Profile -Verbose -Scope CurrentUser -Force
-    Install-Module -Name MicrosoftPowerBIMgmt.Workspaces -Verbose -Scope CurrentUser -Force
-    Install-Module -Name MicrosoftPowerBIMgmt.Reports -Verbose -Scope CurrentUser -Force
-    Install-Module -Name MicrosoftPowerBIMgmt.Data -Verbose -Scope CurrentUser -Force
-    ```
-    <img src="./images/azdevops_reltask1.jpg" width=450>
+   ```
+   Install-Module -Name MicrosoftPowerBIMgmt.Profile -Verbose -Scope CurrentUser -Force
+   Install-Module -Name MicrosoftPowerBIMgmt.Workspaces -Verbose -Scope CurrentUser -Force
+   Install-Module -Name MicrosoftPowerBIMgmt.Reports -Verbose -Scope CurrentUser -Force
+   Install-Module -Name MicrosoftPowerBIMgmt.Data -Verbose -Scope CurrentUser -Force
+   ```
+   
+   <img src="./images/azdevops_reltask1.jpg" width=450>
 
-6.  Click on the "+" (*Add a task to the Agent Job*) again and add another *Powershell Task*.
-7.  Name the task, e.g. `Run PS deploy script`, select a *File Path* type, click the elipses *...* and select either the *deploy-pbixreport-with-gateway.ps1* or *deploy-pbixreport.ps1* file.  Note: Path is visible only if the build pipeline from section 3 ran successfully.
-    <img src="./images/azdevops_psscript.jpg" width=350>
+6. Click on the "+" (*Add a task to the Agent Job*) again and add another *Powershell Task*.
+7. Name the task, e.g. `Run PS deploy script`, select a *File Path* type, click the elipses *...* and select either the *deploy-pbixreport-with-gateway.ps1* or *deploy-pbixreport.ps1* file.  Note: Path is visible only if the build pipeline from section 3 ran successfully.
+   
+   <img src="./images/azdevops_psscript.jpg" width=350>
 
-    <img src="./images/azdevops_reltask2.jpg" width=450>
-8.   Save the Release.
+   <img src="./images/azdevops_reltask2.jpg" width=450>
+8. Save the Release.
 
 #### 5.3 Define the Variables
 *We're on the home stretch!*  Here, we set up the variables referenced by the script using the *Pipeline Variables* and *Variable Groups*.  Pipeline variables are available to a particular pipeline and can be scoped with *Release* so they are accessible to the entire pipeline or scoped to a particular *Stage* within the pipeline.  Variable Groups are available across multiple pipelines and similarily can scoped to a Release or a Stage.  To keep our variables nice and tidy, we define our global variables as *Pipeline Variables* and environment specific (eg. Production, Dev, QA) variables as a *Variable Group* and tie it to a Stage.
