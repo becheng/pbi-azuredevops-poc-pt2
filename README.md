@@ -19,6 +19,7 @@ We start things off by creating the service principal to manage our reports and 
 
    <img src="./images/pbi_dev_settings.jpg" width=550>   
 5. Under *Workspace settings*, go to *Create workspaces*, enable it and add the security group and click the *Apply* button.
+
    <img src="./images/pbi_workspace_settings.jpg" width=550>
 
 ### 2.0 Installing the Power BI Gateway
