@@ -16,6 +16,7 @@ We start things off by creating the service principal to manage our reports and 
    <img src="./images/aad_pbi_api_permissions.jpg" width=450> 
 3. Sign in to your [Power BI portal](https://powerbi.microsoft.com/) with an admin account, go to *Settings* (Gear Icon), *Admin Portal*, *Tenant settings*.
 4. Under *Developer settings*, go to *Allow service principals to use Power BI APIs*, enable it and add the security group and click the *Apply* button.
+
    <img src="./images/pbi_dev_settings.jpg" width=550>   
 5. Under *Workspace settings*, go to *Create workspaces*, enable it and add the security group and click the *Apply* button.
    <img src="./images/pbi_workspace_settings.jpg" width=550>
@@ -144,9 +145,11 @@ We create the release pipeline that uses our Powershell script to deploy the pub
 6. Click on the "+" (*Add a task to the Agent Job*) again and add another *Powershell Task*.
 7. Name the task, e.g. `Run PS deploy script`, select a *File Path* type, click the elipses *...* and select either the *deploy-pbixreport-with-gateway.ps1* or *deploy-pbixreport.ps1* file.  Note: Path is visible only if the build pipeline from section 3 ran successfully.
    
+   <img src="./images/azdevops_reltask2.jpg" width=450>
+
+
    <img src="./images/azdevops_psscript.jpg" width=350>
 
-   <img src="./images/azdevops_reltask2.jpg" width=450>
 8. Save the Release.
 
 #### 5.3 Define the variables
@@ -195,9 +198,6 @@ Example: $(System.DefaultWorkingDirectory)/_**my-pbidevops-build**/drop/**my-pow
         } 
       } 
       ```
-    **TODO - Replace image**
-    <img src="./images/azdevops_vargroup.jpg" width=350>
-
 4. Save the group and go back to the Release, edit it, select *Variables*, *Variable groups*, and select *Link variable group* and link the variable group to the stage.
    
    <img src="./images/azdevops_linkvargrp.jpg" width=350>
