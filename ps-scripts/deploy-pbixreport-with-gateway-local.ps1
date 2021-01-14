@@ -1,3 +1,26 @@
+## usage: ./deploy-pbixreport-with-gateway-local.ps1
+## dependancies:
+# Install-Module -Name MicrosoftPowerBIMgmt.Profile -Verbose -Scope CurrentUser -Force
+# Install-Module -Name MicrosoftPowerBIMgmt.Workspaces -Verbose -Scope CurrentUser -Force
+# Install-Module -Name MicrosoftPowerBIMgmt.Reports -Verbose -Scope CurrentUser -Force
+# Install-Module -Name MicrosoftPowerBIMgmt.Data -Verbose -Scope CurrentUser -Force
+
+$env:tenantId = "[AAD tenant id]"
+$env:clientid = "[AAD app/client id]"
+$env:clientsecret = "[AAP app client secret]"
+$env:reportName = "[PBI report/dataset name]"
+$env:workspacename = "[PBI workspace name]"
+$env:userAdminEmail = "[AAD user account with PBI pro license that is the admin of the on-prem gateway]"
+$env:userAdminPassword="[The above AAD user's password]"
+$env:pbixFilePath= "[Full local file path of .pbix report]"
+$env:dbServerParamName = "[The param NAME used in pbix report used to store the db Server]"
+$env:dbNameParamName = "[The param NAME used in pbix report used to store the db Name]"
+$env:gatewayName = "[The name of the on-prem gateway]"
+
+#onprem datasource
+$env:dbServerParamValue = "[The param VALUE used in pbix report used to store the db Server, e.g. 'localhost\SQLEXPRESS']"
+$env:dbNameParamValue = "[The param VALUE used in pbix report used to store the db Server, e.g. 'mydb']"
+
 write-host "clientId: $env:clientId"
 write-host "clientsecret: $env:clientsecret"
 write-host "tenantId: $env:tenantId"
@@ -142,12 +165,14 @@ Invoke-PowerBIRestMethod `
 	-ErrorAction Stop;
 
 # 6.3 Discover bindable gateways
-write-host "`n...Discover Gateways"
+write-host "`n...Discover Gateways using datasetid: $($dataset.id)"
 
 $gatewayDataSources = Invoke-PowerBIRestMethod `
 	-Url "groups/$($workspace.id)/datasets/$($dataset.id)/Default.DiscoverGateways" `
 	-Method GET | ConvertFrom-Json `
 	-ErrorAction Stop;	
+
+#write-host $gatewayDataSources
 
 # 6.3 get only the target gateway
 $gateway = $gatewayDataSources.value | Where-Object {$_.name -eq $env:gatewayName}
