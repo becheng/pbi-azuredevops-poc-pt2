@@ -108,8 +108,8 @@ We construct a simple build pipeline that publishes our files for deployment.
       displayName: 'Copy Files to: Staging Artifact'
       inputs:
         Contents: |
-          *.pbix 
-          *.ps1
+          **/*.pbix 
+          **/*.ps1
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
         OverWrite: true
     - task: PublishBuildArtifacts@1
@@ -117,8 +117,6 @@ We construct a simple build pipeline that publishes our files for deployment.
 
    ```
    
-   <img src="./images/azdevops_build.jpg" width=450>
-
 3. Save and run the build pipeline.
    
 #### 5.2 Create a Release Pipeline
