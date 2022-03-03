@@ -4,7 +4,7 @@
 
 write-host "`n...Sign in using MA"
 $userAdminPassword = "$env:mauserpassword" | ConvertTo-SecureString -asPlainText -Force
-$credential = New-Object System.Management.Automation.PSCredential($env:userAdminUsername, $userAdminPassword)
+$credential = New-Object System.Management.Automation.PSCredential($env:userAdmin, $userAdminPassword)
 Connect-PowerBIServiceAccount `
 	-Credential $credential 
 
