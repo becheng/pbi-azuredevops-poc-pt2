@@ -57,17 +57,17 @@ $wsusersResponse = Invoke-PowerBIRestMethod `
 	-Method GET `
 	| ConvertFrom-Json 
 	
-$wsusers = $wsusersResponse.value | where-object {$_.emailAddress -eq $env:userAdminEmail} 
+$wsusers = $wsusersResponse.value | where-object {$_.emailAddress -eq $env:userAdmin} 
 if ($null -eq $wsusers) {
 
-	Write-Host "- Adding user '$env:userAdminEmail' to '$env:workspacename' workspace."
+	Write-Host "- Adding user '$env:userAdmin' to '$env:workspacename' workspace."
 	Add-PowerBIWorkspaceUser `
 	   -Id $($workspace.id) `
-	   -UserPrincipalName $env:userAdminEmail `
+	   -UserPrincipalName $env:userAdmin `
 	   -AccessRight "Admin"
 
 } else {
-	write-host "- User $env:userAdminEmail' already has access to the '$env:workspacename' workspace."
+	write-host "- User $env:userAdmin' already has access to the '$env:workspacename' workspace."
 }
 
 ## ------------------------------------------------------
