@@ -15,7 +15,7 @@ We start things off by creating the service principal to manage our reports and 
 2. In your [Azure portal](https://https://portal.azure.com/), select your Azure active directory app, go to its *API permissions*, click *Add a permission*, select *Power BI Service* and add the *Delegated* permissions of `Dataset.ReadWrite.All` and `Workspace.ReadWrite.All`.
    <img src="./images/aad_pbi_api_permissions.jpg" width=450> 
 3. Sign in to your [Power BI portal](https://powerbi.microsoft.com/) with an admin account, go to *Settings* (Gear Icon), *Admin Portal*, *Tenant settings*.
-4. Under *Developer settings*, go to *Allow service principals to use Power BI APIs*, enable it and add the security group and click the *Apply* button.
+4. Under *Developer settings*, go to *Allow service principals to use Power BI APIs*, enable it and add the security group and click the *Apply* button.    
 
    <img src="./images/pbi_dev_settings.jpg" width=550>   
 5. Under *Workspace settings*, go to *Create workspaces*, enable it and add the security group and click the *Apply* button.
@@ -143,10 +143,8 @@ We create the release pipeline that uses our Powershell script to deploy the pub
 
 6. Click on the "+" (*Add a task to the Agent Job*) again and add another *Powershell Task*.
 7. Name the task, e.g. `Run PS deploy script`, select a *File Path* type, click the elipses *...* and select either the *deploy-pbixreport-with-gateway.ps1* or *deploy-pbixreport.ps1* file.  Note: Path is visible only if the build pipeline from section 3 ran successfully.
-   
    <img src="./images/azdevops_reltask2.jpg" width=450>
-
-
+   <br>
    <img src="./images/azdevops_psscript.jpg" width=350>
 
 8. Save the Release.
@@ -165,9 +163,7 @@ We create the release pipeline that uses our Powershell script to deploy the pub
    | userAdmin | [ Admin PowerBI Pro user account, e.g. user@contoso.onmicrosoft.com] | Plain text | Release |
    | userAdminPassword | [ Password of the PowerBI Pro user account] | Secret | Release |
    
-- To set up a variable as a Secret type, click the lock icon located to the right of the variable text field.
-- The pbixFilePath is the path to the published .pbix file with a format: `$(System.DefaultWorkingDirectory)/_[YOUR BUILD PIPELINE NAME]/drop/[YOUR REPORT NAME].pbix`.  
-Example: $(System.DefaultWorkingDirectory)/_**my-pbidevops-build**/drop/**my-powerbi-report**.pbix` 
+   - To set up a variable as a Secret type, click the lock icon located to the right of the variable text field.
 
 **Variable Groups**
 1. Click on the *Variable groups* in the left nav and click *Manage variable groups*.
@@ -183,7 +179,8 @@ Example: $(System.DefaultWorkingDirectory)/_**my-pbidevops-build**/drop/**my-pow
    | dbUserPassword* | [ Database service account password ] | 
    | dbServerParamValue | [ database server name ] | Plain text | Release |
    | dbNameParamValue | [ database name ] | Plain text | Release |
-  
+   - The pbixFilePath is the path to the published .pbix file with a format: `$(System.DefaultWorkingDirectory)/_[YOUR BUILD PIPELINE NAME]/drop/[YOUR REPORT NAME].pbix`.  
+   Example: `$(System.DefaultWorkingDirectory)/_**my-pbidevops-build**/drop/**my-powerbi-report**.pbix` 
    - *The dbUserName and dbUserPassword variables are required only if using the [deploy-pbixreport.ps1](./ps-scripts/deploy-pbixreport.ps1) script.
    - Example of scheduleJson value: 
       ```
