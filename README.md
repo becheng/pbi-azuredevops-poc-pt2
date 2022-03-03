@@ -183,9 +183,9 @@ We create the release pipeline that uses our Powershell script to deploy the pub
    \* The dbUserName and dbUserPassword variables are required only if using the [deploy-pbixreport.ps1](./ps-scripts/deploy-pbixreport.ps1) script.
    
    Notes:
-   - The pbixFilePath is the path to the published .pbix file with a format: `$(System.DefaultWorkingDirectory)/_[YOUR BUILD PIPELINE NAME]/drop/[YOUR REPORT NAME].pbix`.  Example:   
+   - The pbixFilePath is the path to the published .pbix file with a format: `$(System.DefaultWorkingDirectory)/_[YOUR BUILD PIPELINE NAME]/drop/[YOUR PBIX PATH]/[YOUR REPORT NAME].pbix`.  Example:   
      ```
-     $(System.DefaultWorkingDirectory)/_my-pbidevops-build/drop/customer-report-v2.pbix
+     $(System.DefaultWorkingDirectory)/_my-pbidevops-build/drop/pbix/customer-report-v2.pbix
      ``` 
    - Example of scheduleJson value: 
       ```
