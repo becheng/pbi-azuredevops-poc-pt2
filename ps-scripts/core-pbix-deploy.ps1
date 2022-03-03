@@ -5,7 +5,7 @@ write-host "client_secret: $env:clientsecret"
 write-host "tenant.id: $env:tenant_id"
 write-host "datasetname: $env:datasetname"
 write-host "workspacename: $env:workspacename"
-write-host "userAdminUsername: $env:userAdminUsername"
+write-host "userAdminUsername: $env:userAdmin"
 write-host "pbixFilePath: $env:pbixFilePath"
 write-host "dbServerParamName: $env:dbServerParamName"
 write-host "dbServerParamValue: $env:dbServerParamValue"
@@ -64,12 +64,12 @@ $wsusersResponse = Invoke-PowerBIRestMethod `
 	-Method GET `
 	| ConvertFrom-Json 
 	
-$wsusers = $wsusersResponse.value | where-object {$_.emailAddress -eq $env:userAdminUsername} 
+$wsusers = $wsusersResponse.value | where-object {$_.emailAddress -eq $env:userAdmin} 
 if ($null -eq $wsusers) {
 
-	Write-Host "- Adding user '$env:userAdminUsername' to '$env:workspacename' workspace."
+	Write-Host "- Adding user '$env:userAdmin' to '$env:workspacename' workspace."
 	$userReqBody = @{
-		 emailAddress = $env:userAdminUsername
+		 emailAddress = $env:userAdmin
 		 groupUserAccessRight = "Admin"
 	 }  |  ConvertTo-Json
 
@@ -80,7 +80,7 @@ if ($null -eq $wsusers) {
 		-ErrorAction Stop;
 	
 } else {
-	write-host "- User $env:userAdminUsername' already has access to the '$env:workspacename' workspace."
+	write-host "- User $env:userAdmin' already has access to the '$env:workspacename' workspace."
 }
 
 write-Host "Admin user added to workspace" -ForegroundColor Green;
