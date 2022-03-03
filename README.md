@@ -163,25 +163,30 @@ We create the release pipeline that uses our Powershell script to deploy the pub
    | userAdmin | [ Admin PowerBI Pro user account, e.g. user@contoso.onmicrosoft.com] | Plain text | Release |
    | userAdminPassword | [ Password of the PowerBI Pro user account] | Secret | Release |
    
-   - To set up a variable as a Secret type, click the lock icon located to the right of the variable text field.
+   Note: To set up a variable as a Secret type, click the lock icon located to the right of the variable text field.
 
 **Variable Groups**
 1. Click on the *Variable groups* in the left nav and click *Manage variable groups*.
 2. Click on *+ Variable group*, name the group, e.g. `my-variable-group` 
 3. Add the following variables:
-   | Variable Name | Value |
-   | ------------- | ----- |
-   | workspacename | [ workspace name ] |
-   | pbixFilePath | [ File path to the published .pbix file] |
-   | gatewayName | [ gateway name ] |
-   | scheduleJson | [ json string of the dataset refresh schedule ] |
-   | dbUserName* | [ Database service account user name ] | 
-   | dbUserPassword* | [ Database service account password ] | 
-   | dbServerParamValue | [ database server name ] | Plain text | Release |
-   | dbNameParamValue | [ database name ] | Plain text | Release |
-   - The pbixFilePath is the path to the published .pbix file with a format: `$(System.DefaultWorkingDirectory)/_[YOUR BUILD PIPELINE NAME]/drop/[YOUR REPORT NAME].pbix`.  
-   Example: `$(System.DefaultWorkingDirectory)/_**my-pbidevops-build**/drop/**my-powerbi-report**.pbix` 
-   - *The dbUserName and dbUserPassword variables are required only if using the [deploy-pbixreport.ps1](./ps-scripts/deploy-pbixreport.ps1) script.
+   | Variable Name | Value | Type |
+   | ------------- | ----- | ---- |
+   | workspacename | [ workspace name ] | Plain text |
+   | pbixFilePath | [ File path to the published .pbix file] | Plain text |
+   | gatewayName | [ gateway name ] | Plain text |
+   | scheduleJson | [ json string of the dataset refresh schedule ] | Plain text |
+   | dbUserName* | [ Database service account user name ] | Secret |
+   | dbUserPassword* | [ Database service account password ] | Secret |
+   | dbServerParamValue | [ database server name ] | Plain text | Release | Plain text |
+   | dbNameParamValue | [ database name ] | Plain text | Release | Plain text |
+   
+   \* The dbUserName and dbUserPassword variables are required only if using the [deploy-pbixreport.ps1](./ps-scripts/deploy-pbixreport.ps1) script.
+   
+   Notes:
+   - The pbixFilePath is the path to the published .pbix file with a format: `$(System.DefaultWorkingDirectory)/_[YOUR BUILD PIPELINE NAME]/drop/[YOUR REPORT NAME].pbix`.  Example:   
+     ```
+     $(System.DefaultWorkingDirectory)/_my-pbidevops-build/drop/customer-report-v2.pbix
+     ``` 
    - Example of scheduleJson value: 
       ```
       { 
@@ -210,7 +215,8 @@ Variables marked as secret in either in *Variable Groups* or *Pipeline Variables
    | userAdminPassword | $(userAdminPassword) |
    | dbUserName* | $(dbUserName) | 
    | dbUserPassword* | $(dbUserPassword) |  
-   *only applicable if using a cloud datasource
+   
+   \* only applicable if using a cloud datasource
 3. Save the Release.
     
 ### 6.0 Running it end to end
