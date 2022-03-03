@@ -164,8 +164,6 @@ We create the release pipeline that uses our Powershell script to deploy the pub
    | clientSecret | [ Client secret of the registered AAD app ] | Secret | Release |
    | userAdminEmail | [ Email addresss of the PowerBI Pro user account] | Plain text | Release |
    | userAdminPassword | [ Password of the PowerBI Pro user account] | Secret | Release |
-   | dbServerParamValue | [ database server name ] | Plain text | Release |
-   | dbNameParamValue | [ database name ] | Plain text | Release |
    
 - To set up a variable as a Secret type, click the lock icon located to the right of the variable text field.
 - The pbixFilePath is the path to the published .pbix file with a format: `$(System.DefaultWorkingDirectory)/_[YOUR BUILD PIPELINE NAME]/drop/[YOUR REPORT NAME].pbix`.  
@@ -183,6 +181,8 @@ Example: $(System.DefaultWorkingDirectory)/_**my-pbidevops-build**/drop/**my-pow
    | scheduleJson | [ json string of the dataset refresh schedule ] |
    | dbUserName* | [ Database service account user name ] | 
    | dbUserPassword* | [ Database service account password ] | 
+   | dbServerParamValue | [ database server name ] | Plain text | Release |
+   | dbNameParamValue | [ database name ] | Plain text | Release |
   
    - *The dbUserName and dbUserPassword variables are required only if using the [deploy-pbixreport.ps1](./ps-scripts/deploy-pbixreport.ps1) script.
    - Example of scheduleJson value: 
