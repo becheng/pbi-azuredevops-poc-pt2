@@ -54,17 +54,17 @@ $wsusersResponse = Invoke-PowerBIRestMethod `
 	-Method GET `
 	| ConvertFrom-Json 
 	
-$wsusers = $wsusersResponse.value | where-object {$_.emailAddress -eq $env:userAdminEmail} 
+$wsusers = $wsusersResponse.value | where-object {$_.emailAddress -eq $env:userAdmin} 
 if ($null -eq $wsusers) {
 
-	Write-Host "- Adding user '$env:userAdminEmail' to '$env:workspacename' workspace."
+	Write-Host "- Adding user '$env:userAdmin' to '$env:workspacename' workspace."
 	Add-PowerBIWorkspaceUser `
 	   -Id $($workspace.id) `
-	   -UserPrincipalName $env:userAdminEmail `
+	   -UserPrincipalName $env:userAdmin `
 	   -AccessRight "Admin"
 
 } else {
-	write-host "- User $env:userAdminEmail' already has access to the '$env:workspacename' workspace."
+	write-host "- User $env:userAdmin' already has access to the '$env:workspacename' workspace."
 }
 
 ## ------------------------------------------------------
@@ -129,7 +129,7 @@ write-host "DB param change complete";
 write-host "`n...Sign in using user account"
 
 $userAdminPassword = $env:userAdminPassword | ConvertTo-SecureString -asPlainText -Force
-$uacreds= New-Object System.Management.Automation.PSCredential($env:userAdminEmail, $userAdminPassword)
+$uacreds= New-Object System.Management.Automation.PSCredential($env:userAdmin, $userAdminPassword)
 Connect-PowerBIServiceAccount `
 	-Credential $uacreds
 
