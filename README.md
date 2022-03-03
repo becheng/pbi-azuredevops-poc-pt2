@@ -162,7 +162,7 @@ We create the release pipeline that uses our Powershell script to deploy the pub
    | tenantId | [ Tenant Id of the registered AAD app ] | Plain text | Release |
    | clientId | [ Client Id of the registered AAD app ] | Plain text | Release |
    | clientSecret | [ Client secret of the registered AAD app ] | Secret | Release |
-   | userAdminEmail | [ Email addresss of the PowerBI Pro user account] | Plain text | Release |
+   | userAdmin | [ Admin PowerBI Pro user account, e.g. user@contoso.onmicrosoft.com] | Plain text | Release |
    | userAdminPassword | [ Password of the PowerBI Pro user account] | Secret | Release |
    
 - To set up a variable as a Secret type, click the lock icon located to the right of the variable text field.
