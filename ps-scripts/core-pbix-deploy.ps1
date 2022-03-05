@@ -3,7 +3,7 @@
 write-host "client.id: $env:client_id"
 write-host "client_secret: $env:clientsecret"
 write-host "tenant.id: $env:tenant_id"
-write-host "datasetname: $env:datasetname"
+write-host "datasetname: $env:reportName"
 write-host "workspacename: $env:workspacename"
 write-host "userAdminUsername: $env:userAdmin"
 write-host "pbixFilePath: $env:pbixFilePath"
@@ -91,7 +91,7 @@ write-Host "Admin user added to workspace" -ForegroundColor Green;
 write-host "`n...Importing .pbix report."
 New-PowerBIReport `
 	-Path $env:pbixFilePath `
-	-Name $env:datasetname `
+	-Name $env:reportName `
 	-ConflictAction "CreateOrOverwrite" `
 	-Workspace $workspace
 write-Host ".pbix report uploaded" -ForegroundColor Green;
@@ -107,7 +107,7 @@ $datasetsResp = Invoke-PowerBIRestMethod `
 	| ConvertFrom-Json
 
 # get only the target dataset 
-$dataset = $datasetsResp.value | Where-Object {$_.name -eq $env:datasetname}
+$dataset = $datasetsResp.value | Where-Object {$_.name -eq $env:reportName}
  
 # take over 
 Invoke-PowerBIRestMethod `

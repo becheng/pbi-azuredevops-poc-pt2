@@ -25,7 +25,7 @@ $datasetsResp = Invoke-PowerBIRestMethod `
 	| ConvertFrom-Json 
 
 # get only the target dataset 
-$dataset = $datasetsResp.value | Where-Object {$_.name -eq $env:datasetname}
+$dataset = $datasetsResp.value | Where-Object {$_.name -eq $env:reportName}
  
 # take over 
 Invoke-PowerBIRestMethod `

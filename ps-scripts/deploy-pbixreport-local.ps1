@@ -1,3 +1,24 @@
+## usage: ./deploy-pbixreport-local.ps1
+
+## dependancies:
+# Install-Module -Name MicrosoftPowerBIMgmt.Profile -Verbose -Scope CurrentUser -Force
+# Install-Module -Name MicrosoftPowerBIMgmt.Workspaces -Verbose -Scope CurrentUser -Force
+# Install-Module -Name MicrosoftPowerBIMgmt.Reports -Verbose -Scope CurrentUser -Force
+# Install-Module -Name MicrosoftPowerBIMgmt.Data -Verbose -Scope CurrentUser -Force
+
+$env:clientid = "[App Reg clientId]"
+$env:clientsecret = "[App Reg clientSecret]"
+$env:tenantId = "[AAD tenantId]"
+$env:reportName = "[pbix report name]"
+$env:workspacename = "[name of workspace]"
+$env:userAdmin = "[AAD account eg. admin@contoso.onmicrosoft.com]"
+$env:pbixFilePath= "[path\report-name.pbix]"
+$env:dbServerParamName = "[pbix param name of db Server]"
+$env:dbNameParamName = "[pbix param name of db Name]"
+$env:dbNameParamValue = "[databaseName]"
+$env:dbServerParamValue = "[database server eg. dbServerName.database.windows.net]"
+$env:dbUserName = "[db admin username]"
+$env:dbUserPassword = "[db admin password]"
 
 write-host "tenantId: $env:tenantId"
 write-host "clientId: $env:clientId"
@@ -97,6 +118,7 @@ $new_report = Get-PowerBIReport `
 ## ------------------------------------------------------
 ## 5. Take over the DATASET
 ## ------------------------------------------------------
+
 write-host "`nTake over the dataset with the SP"
 
 # get the embedded dataset of the new report
@@ -115,6 +137,7 @@ write-host "Take over with SP complete" -ForegroundColor Green;
 ## ------------------------------------------------------
 ## 6. UPDATE DB PARAMS
 ## ------------------------------------------------------
+
 #Change the database server and db / params
 write-host "`nUpdating DB params"
 
@@ -188,6 +211,7 @@ if($null -ne $env:scheduleJson)
 ## ------------------------------------------------------
 ## 9. REFRESH THE DATASET 
 ## ------------------------------------------------------
+
 # Note!!! only a max of 8 refreshes allowed in the non-premium workspace, after which 400/Bad Requests will be recieved 
 # Note2 - Refresh must be issued after the bind to gateway otherwise the gateway's datasource will not be mapped.
  
