@@ -37,23 +37,26 @@ Powershell is used to provision the gateway, however at the time of this writing
 ### 4.0 Parameterize the PowerBI Report data source
 **Skip this section, if using the supplied report [customer-report-v3.pbix](./pbix/customer-report-v3.pbix).**
 
-1. Using your [Power BI Desktop](https://powerbi.microsoft.com/en-us/desktop/) editor, create a new report, select *Transform data* and select *Data source settings*.
+1. Using your [Power BI Desktop](https://powerbi.microsoft.com/en-us/desktop/) editor, create a new report, select *Transform data* > *Transform Data* which will launch the Transform Data window, and in there, select the *View* tab and check the *Always allow* checkbox with the *Parameters* section.  
+
+   <img src="./images/alwaysAllowParams.jpg" width=450> 
+2. In the Desktop, select *Transform data* and select *Data source settings*.
    
    <img src="./images/datasrc_settings.jpg" width=450> 
-2. Select the *Change Source...* button to open the report's data source (in our case, it was Sql Server) window.
-3. Select the *Server* dropdown and select *New Parameter...*  
+3. Select the *Change Source...* button to open the report's data source (in our case, it was Sql Server) window.
+4. Select the *Server* dropdown and select *New Parameter...*  
    
    <img src="./images/pbidesk_paramstart.jpg" width=250>
-4. In the *Manage Parameters* window: 
+5. In the *Manage Parameters* window: 
    - Add new parameter for the database server, e.g. `dbServerParam`.
    - Check the Required checkbox to make the parameter mandatory.
    - Enter your default server (typically your development instance) in the *Current Value* field.     
    
      <img src="./images/dbServerParam.jpg" width=250>
-5. Repeat the above step and add new parameter for the database name, e.g. `dbNameParam`.  
-6. Make note of both parameter names as they will be used later.
-7. Apply the changes to the report, connect to the data source and build a sample report using the Customer table.
-8. Save the pbix file and ensure the data source is saved with both parameters in place. 
+6. Repeat the above step and add new parameter for the database name, e.g. `dbNameParam`.  
+7. Make note of both parameter names as they will be used later.
+8. Apply the changes to the report, connect to the data source and build a sample report using the Customer table.
+9.  Save the pbix file and ensure the data source is saved with both parameters in place. 
    
    <img src="./images/pbidatasrcwithparams.jpg" width=250>
 
